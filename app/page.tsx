@@ -9,9 +9,15 @@ import { Movie, Movies } from "@/lib/types";
 import { ThemeToggle } from "@/components/ThemeToggle";
 
 type AppState = "idle" | "loading" | "success" | "error";
-const API_URL = "https://localhost:7272/api/Movie";
 
-const renderHeader = () => (
+// Rodando localmente com backend em .NET
+// const API_URL = "https://localhost:7272/api/Movie";
+
+// Rodando o docker localmente
+const API_URL = "http://localhost:8080/api/Movie";
+
+// Extraído para fora para manter o código limpo
+const Header = () => (
   <header className="flex w-full flex-col items-center gap-2">
     <WandSparkles className="h-10 w-10 text-blue-600 dark:text-blue-400" />
     <h1 className="text-4xl font-extrabold text-gray-900 dark:text-white">
@@ -24,11 +30,19 @@ const renderHeader = () => (
 );
 
 export default function Home() {
+  // --- CORREÇÃO DE HIDRATAÇÃO ---
+  // 1. Estado para saber se o componente já montou no cliente
+  const [isMounted, setIsMounted] = useState(false);
+
   const [state, setState] = useState<AppState>("idle");
   const [selectedMovie, setSelectedMovie] = useState("");
   const [allMovies, setAllMovies] = useState<Movies[]>([]);
   const [recommendations, setRecommendations] = useState<Movie[]>([]);
   const [error, setError] = useState<string | null>(null);
+
+  useEffect(() => {
+    setIsMounted(true);
+  }, []);
 
   useEffect(() => {
     const fetchAllMovies = async () => {
@@ -92,12 +106,16 @@ export default function Home() {
     setError(null);
   };
 
+  if (!isMounted) {
+    return null;
+  }
+
   return (
     <main className="flex min-h-screen w-full items-center justify-center bg-linear-to-br from-blue-50 to-indigo-100 p-4 sm:p-6 md:p-8 dark:from-gray-950 dark:to-gray-900 transition-colors duration-300 ease-in-out">
       <div className="relative flex w-full max-w-5xl flex-col items-center space-y-10 rounded-3xl bg-white/90 p-8 sm:p-10 md:p-14 shadow-2xl backdrop-blur-md dark:bg-gray-800/90 dark:shadow-xl dark:shadow-gray-950/50 transition-colors duration-300 ease-in-out">
         <ThemeToggle />
 
-        {renderHeader()}
+        <Header />
 
         {state === "error" && (
           <div className="mx-auto w-full max-w-md rounded-lg border border-red-300 bg-red-50 p-4 text-center dark:border-red-700 dark:bg-red-900/30">
