@@ -37,7 +37,7 @@ export function ResultsGrid({ recommendations, onReset }: ResultsGridProps) {
         </p>
       </div>
 
-      <div className="mt-8 grid w-full grid-cols-2 gap-4 sm:grid-cols-3 lg:grid-cols-4">
+      <div className="mt-8 grid w-full grid-cols-2 gap-4 sm:grid-cols-3">
         {recommendations.map((movie) => (
           <div
             key={movie.id}
